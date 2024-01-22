@@ -1,7 +1,7 @@
 package server
 
 import (
-	"gin-restapi/model"
+	"backend/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

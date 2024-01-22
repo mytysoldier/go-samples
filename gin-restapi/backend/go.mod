@@ -1,4 +1,4 @@
-module gin-restapi
+module backend
 
 go 1.21.6
 
