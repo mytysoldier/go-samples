@@ -2,7 +2,10 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 // 外部からアクセス可能なDB変数を定義
@@ -21,4 +24,5 @@ func InitDB() {
 	DB = db
 
 	log.Println("DB initialized")
+	fmt.Println("DB initialized")
 }

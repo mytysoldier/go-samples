@@ -1,7 +1,9 @@
 package server
 
 import (
+	"backend/db"
 	"backend/model"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +13,7 @@ func Server() {
 	r := gin.Default()
 	r.Use(corsMiddleware())
 	r.GET("/", handleHome)
+	r.GET("/books", handleSearchBooks)
 	r.Run()
 }
 
@@ -33,5 +36,14 @@ func corsMiddleware() gin.HandlerFunc {
 
 func handleHome(ctx *gin.Context) {
 	books := model.GetRandomBooks()
+	ctx.JSON(http.StatusOK, gin.H{"books": books})
+}
+
+func handleSearchBooks(ctx *gin.Context) {
+	books, err := GetBooks(db.DB)
+	if err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
 	ctx.JSON(http.StatusOK, gin.H{"books": books})
 }
