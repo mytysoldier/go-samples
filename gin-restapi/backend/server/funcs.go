@@ -3,6 +3,7 @@ package server
 import (
 	"backend/model"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 )
@@ -74,4 +75,36 @@ func UpdateBook(db *sql.DB, book model.Book) (model.Book, error) {
 	fmt.Println("updated book")
 
 	return updatedBook, nil
+}
+
+func DeleteBook(db *sql.DB, id int) error {
+	existingBook, err := GetBookByID(db, id)
+	if err != nil {
+		log.Fatal("error deleting book")
+		return err
+	}
+
+	// 本が存在しない場合はエラーを返す
+	if existingBook.Id == 0 {
+		return errors.New("book not found")
+	}
+
+	// 本が存在する場合は削除を実行
+	_, err = db.Exec("DELETE FROM BOOK WHERE id = $1", id)
+	if err != nil {
+		log.Fatal("error deleting book")
+		return err
+	}
+
+	return nil
+}
+
+func DeleteAllBook(db *sql.DB) error {
+	_, err := db.Exec("DELETE FROM BOOK")
+	if err != nil {
+		log.Fatal("error deleting all book")
+		return err
+	}
+
+	return nil
 }

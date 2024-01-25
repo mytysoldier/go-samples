@@ -19,6 +19,8 @@ func Server() {
 	r.GET("/books", handleSearchBooks)
 	r.POST("/book", handleInsertBook)
 	r.PUT("/book/:id", handleUpdateBook)
+	r.DELETE("/book/:id", handleDeleteBook)
+	r.DELETE("/book", handleDeleteAllBook)
 	r.Run()
 }
 
@@ -126,6 +128,32 @@ func handleUpdateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"book": updatedBook})
 }
 
-func handleDeleteBook() {}
+func handleDeleteBook(ctx *gin.Context) {
+	// パスパラメーター "id" を取得
+	id := ctx.Param("id")
 
-func handleDeleteAllBook() {}
+	// id を整数に変換
+	bookID, err := strconv.Atoi(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	err = DeleteBook(db.DB, bookID)
+	if err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{})
+}
+
+func handleDeleteAllBook(ctx *gin.Context) {
+	err := DeleteAllBook(db.DB)
+	if err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{})
+}
