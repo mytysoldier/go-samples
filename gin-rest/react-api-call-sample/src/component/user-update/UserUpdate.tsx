@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import "./UserComponent.css";
 import User from "../../api/model/User";
-import { fetchUserData } from "../../api/UserApi";
+import { UpdateUser, fetchUserData } from "../../api/UserApi";
+import { Link, useParams } from "react-router-dom";
 
-const UserUpdate: React.FC<{ id: number }> = ({ id }) => {
+const UserUpdate: React.FC = () => {
+  const { id } = useParams();
+  const numericId: number = id ? parseInt(id, 10) : 0;
+
   const [user, setUser] = useState<User | null>(null);
   const [updatedName, setUpdatedName] = useState<string>("");
   const [updatedAge, setUpdatedAge] = useState<number | undefined>(undefined);
@@ -11,7 +14,7 @@ const UserUpdate: React.FC<{ id: number }> = ({ id }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchUserData(id);
+      const data = await fetchUserData(numericId);
       setUser(data);
     };
 
@@ -20,7 +23,8 @@ const UserUpdate: React.FC<{ id: number }> = ({ id }) => {
 
   const handleUpdate = async () => {
     if (user) {
-      const updatedUserData = await UpdateUser(id, {
+      const updatedUserData = await UpdateUser({
+        Id: numericId,
         Name: updatedName || user.Name,
         Age: updatedAge !== undefined ? updatedAge : user.Age,
       });
@@ -40,25 +44,30 @@ const UserUpdate: React.FC<{ id: number }> = ({ id }) => {
           <p>Name: {user.Name}</p>
           <p>Age: {user.Age}</p>
 
-          <label>
-            Updated Name:
+          <div style={{ marginBottom: "10px" }}>
+            <label>Updated Name:</label>
             <input
               type="text"
               value={updatedName}
               onChange={(e) => setUpdatedName(e.target.value)}
             />
-          </label>
+          </div>
 
-          <label>
-            Updated Age:
+          <div style={{ marginBottom: "10px" }}>
+            <label>Updated Age:</label>
             <input
               type="number"
               value={updatedAge !== undefined ? updatedAge : ""}
               onChange={(e) => setUpdatedAge(parseInt(e.target.value, 10))}
             />
-          </label>
+          </div>
 
-          <button onClick={handleUpdate}>Update</button>
+          <div>
+            <button onClick={handleUpdate} style={{ marginRight: "5px" }}>
+              Update
+            </button>
+            <Link to={"/"}>戻る</Link>
+          </div>
 
           {isUpdateSuccess && <p>更新しました。</p>}
         </div>

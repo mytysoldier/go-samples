@@ -36,4 +36,28 @@ export const fetchUserDatas = async (): Promise<User[] | null> => {
   }
 };
 
-export const UpdateUser = async (): Promise<User | null> => {};
+export const UpdateUser = async (userData: User): Promise<User | null> => {
+  try {
+    return userData;
+    // const apiUrl = "https://api.example.com/users/update";
+
+    // const response = await fetch(apiUrl, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(userData),
+    // });
+
+    // if (!response.ok) {
+    //   console.error("Failed to update user");
+    //   return null;
+    // }
+
+    // const updatedUser: User = await response.json();
+    // return updatedUser;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return null;
+  }
+};

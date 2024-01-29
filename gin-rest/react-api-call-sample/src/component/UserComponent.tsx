@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import User from "../api/model/User";
 import { fetchUserDatas } from "../api/UserApi";
 import "./UserComponent.css";
+import { Link } from "react-router-dom";
 
 const UserComponent: React.FC = () => {
   const [userList, setUserList] = useState<User[] | null>(null);
@@ -34,13 +35,16 @@ const UserComponent: React.FC = () => {
                   <td>{user.Id}</td>
                   <td>{user.Name}</td>
                   <td>{user.Age}</td>
+                  <td>
+                    <Link to={`/user/update/${user.Id}`}>更新</Link>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <p>Loading user data...</p>
+        <p>ユーザーデータを読み込んでいます...</p>
       )}
     </div>
   );
