@@ -18,9 +18,11 @@ var DB *sql.DB
 func main() {
 	initDB()
 	r := gin.Default()
+	r.Use(corsMiddleware())
 	r.GET("/", handleHome)
 	r.POST("/user", handleCreateUser)
 	r.GET("/user/:id", handleGetUserByID)
+	r.GET("/users", handleGetUsers)
 	r.PUT("/user/:id", handleUpdateUser)
 	r.DELETE("/user/:id", handleDeleteUser)
 	r.Run()
@@ -100,6 +102,20 @@ func handleGetUserByID(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+func handleGetUsers(ctx *gin.Context) {
+
+
+	users, err := funcs.GetUsers(DB)
+	if err != nil {
+		log.Fatal(err)
+		ctx.JSON(http.StatusInternalServerError,
+			gin.H{"error": "Failed to retrieve users"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"users": users})
 }
 
 func handleUpdateUser(ctx *gin.Context) {

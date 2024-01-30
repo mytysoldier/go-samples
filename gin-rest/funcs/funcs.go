@@ -40,6 +40,36 @@ func GetUserByID(db *sql.DB, id int) (model.User, error) {
 	return user, nil
 }
 
+func GetUsers(db *sql.DB) ([]model.User, error) {
+	rows, err := db.Query("SELECT id, name, age FROM public.user")
+    if err != nil {
+        log.Fatal("error querying users")
+        return nil, err
+    }
+    defer rows.Close()
+
+    var users []model.User
+    for rows.Next() {
+        var user model.User
+        if err := rows.Scan(&user.Id, &user.Name, &user.Age); err != nil {
+            log.Fatal("error scanning user")
+            return nil, err
+        }
+        users = append(users, user)
+    }
+
+    if err := rows.Err(); err != nil {
+        log.Fatal("error iterating over rows")
+        return nil, err
+    }
+
+	if len(users) == 0 {
+        return []model.User{}, nil
+    }
+
+    return users, nil
+}
+
 func UpdateUser(db *sql.DB, user model.User) (model.User, error) {
 	var updatedUser model.User
 
