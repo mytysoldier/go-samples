@@ -36,6 +36,15 @@ export const fetchUserDatas = async (): Promise<User[] | null> => {
   }
 };
 
+export const RegisterUser = async (userData: User): Promise<User | null> => {
+  try {
+    return userData;
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return null;
+  }
+};
+
 export const UpdateUser = async (userData: User): Promise<User | null> => {
   try {
     return userData;

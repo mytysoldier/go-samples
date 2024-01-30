@@ -1,5 +1,5 @@
 type User = {
-  Id: number;
+  Id?: number;
   Name: String;
   Age: number;
 };
