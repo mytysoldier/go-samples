@@ -95,3 +95,26 @@ export const UpdateUser = async (userData: User): Promise<User | null> => {
     return null;
   }
 };
+
+export const deleteUser = async (userId: number): Promise<boolean> => {
+  try {
+    const apiUrl = `http://localhost:8080/user/${userId}`;
+
+    const response = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Failed to delete user");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return false;
+  }
+};

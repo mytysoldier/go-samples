@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import User from "../api/model/User";
-import { fetchUserDatas } from "../api/UserApi";
+import { deleteUser, fetchUserDatas } from "../api/UserApi";
 import "./UserComponent.css";
 import { Link } from "react-router-dom";
 
@@ -26,11 +26,15 @@ const UserComponent: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (deletingUserId !== null) {
       try {
-        // TODO 削除APIの呼び出し
+        const isDeleted = await deleteUser(deletingUserId);
 
-        setDeleteDialogOpen(false);
-        const updatedData = await fetchUserDatas();
-        setUserList(updatedData);
+        if (isDeleted) {
+          setDeleteDialogOpen(false);
+          const updatedData = await fetchUserDatas();
+          setUserList(updatedData);
+        } else {
+          console.error("Error deleting user");
+        }
       } catch (error) {
         console.error("Error deleting user data:", error);
       }
