@@ -11,11 +11,6 @@ export const fetchUserData = async (id: number): Promise<User | null> => {
     const responseData: { user: User } = await response.json();
     const userData: User = responseData.user;
     return userData;
-
-    // // ダミーデータを生成して返す
-    // const dummyData: User = { Id: 1, Name: "John Doe", Age: 25 };
-
-    // return dummyData;
   } catch (error) {
     console.error("Error fetching user data:", error);
     return null;
@@ -33,15 +28,6 @@ export const fetchUserDatas = async (): Promise<User[] | null> => {
 
     const { users }: { users: User[] } = await response.json();
     return users || [];
-
-    // // ダミーデータを生成して返す
-    // const dummyData: User[] = [
-    //   { Id: 1, Name: "John Doe", Age: 25 },
-    //   { Id: 2, Name: "Jane Smith", Age: 30 },
-    //   // 他にも必要なだけダミーデータを追加できます
-    // ];
-
-    // return dummyData;
   } catch (error) {
     console.error("Error fetching user data:", error);
     return null;
