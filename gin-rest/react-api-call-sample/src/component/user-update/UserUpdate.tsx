@@ -19,7 +19,7 @@ const UserUpdate: React.FC = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, []);
 
   const handleUpdate = async () => {
     if (user) {
