@@ -8,21 +8,63 @@ import (
 	"context"
 	"fmt"
 	"graphql-sample/graph/model"
+	"log"
+	"time"
+
+	"github.com/segmentio/ksuid"
 )
 
 // PostMessage is the resolver for the postMessage field.
 func (r *mutationResolver) PostMessage(ctx context.Context, user string, text string) (*model.Message, error) {
-	panic(fmt.Errorf("not implemented: PostMessage - postMessage"))
+	message := &model.Message{
+		ID:        ksuid.New().String(),
+		CreatedAt: time.Now().UTC().String(),
+		User:      user,
+		Text:      text,
+	}
+
+	// 投稿されたメッセージを保存し、subscribeしているすべてのコネクションにブロードキャスト
+	r.mutex.Lock()
+	r.messages = append(r.messages, message)
+	for _, ch := range r.subscribers {
+		ch <- message
+	}
+	r.mutex.Unlock()
+
+	return message, nil
 }
 
 // Messages is the resolver for the messages field.
 func (r *queryResolver) Messages(ctx context.Context) ([]*model.Message, error) {
-	panic(fmt.Errorf("not implemented: Messages - messages"))
+	return r.messages, nil
 }
 
 // MessagePosted is the resolver for the messagePosted field.
 func (r *subscriptionResolver) MessagePosted(ctx context.Context, user string) (<-chan *model.Message, error) {
-	panic(fmt.Errorf("not implemented: MessagePosted - messagePosted"))
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	if _, ok := r.subscribers[user]; ok {
+		err := fmt.Errorf("`%s` has already been subscribed.", user)
+		log.Print(err.Error())
+		return nil, err
+	}
+
+	// チャンネルを作成し、リストに登録
+	ch := make(chan *model.Message, 1)
+	r.subscribers[user] = ch
+	log.Printf("`%s` has been subscribed!", user)
+
+	// コネクションが終了したら、このチャンネルを削除する
+	go func() {
+		<-ctx.Done()
+		r.mutex.Lock()
+		delete(r.subscribers, user)
+		r.mutex.Unlock()
+		log.Printf("`%s` has been unsubscribed.", user)
+	}()
+
+	return ch, nil
 }
 
 // Mutation returns MutationResolver implementation.
